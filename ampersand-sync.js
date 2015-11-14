@@ -114,8 +114,14 @@ module.exports = function (method, model, options) {
     // With jQuery.ajax's syntax.
     var promise = new TPromise(function (resolve, reject) {
         request = options.xhr = options.xhrImplementation(ajaxSettings, function (err, resp, body) {
-            if (err) {
-                if (options.error) options.error(resp, 'error', err.message);
+            if (err || resp.statusCode >= 400) {
+                if (options.error) {
+                    try {
+                        body = JSON.parse(body);
+                    } catch(e){}
+                    var message = (err? err.message : (body || "HTTP"+resp.statusCode));
+                    options.error(resp, 'error', message);
+                }
                 reject(err);
             } else {
                 // Parse body as JSON if a string.
