@@ -256,3 +256,24 @@ test('Call user provided beforeSend function from model\'s ajaxConfig when no cu
 
     t.end();
 });
+
+test('Call the error callback when status code is >= 400 and do not call success callback', function (t) {
+    t.plan(3);
+    var mockResp = {statusCode: 400};
+    var mockBody = {message: 'Forbidden'};
+    var xhr = sync('read', getStub(), {
+        error: function (resp, type, error) {
+            t.deepEqual(resp, mockResp, 'should be passed through response');
+            t.equal(type, 'error', 'is string \'error\' as per jquery');
+            t.ok(error.message==mockBody.message, 'should return a body with the expected message');
+            t.end();
+        },
+        success: function (resp, type, error) {
+            t.fail('doh');
+        },
+        xhrImplementation: function (ajaxSettings, callback) {
+            callback(null, mockResp, JSON.stringify(mockBody));
+            return {};
+        }
+    });
+});
