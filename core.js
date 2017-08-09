@@ -141,7 +141,7 @@ module.exports = function (xhr) {
                       }
                   }
                   if (options.success) options.success(body, 'success', resp);
-                  resolve(body);
+                  resolve(model);
                   // options.always is deliberately not implemented as it can be easily implemented with promise
               }
           });
