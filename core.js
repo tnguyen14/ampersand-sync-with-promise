@@ -1,8 +1,8 @@
 /*$AMPERSAND_VERSION*/
-var result = require('lodash.result');
-var defaults = require('lodash.defaults');
-var includes = require('lodash.includes');
-var assign = require('lodash.assign');
+var result = require('lodash/result');
+var defaults = require('lodash/defaults');
+var includes = require('lodash/includes');
+var assign = require('lodash/assign');
 var qs = require('qs');
 var mediaType = require('media-type');
 var Promise = require('any-promise');
@@ -41,8 +41,7 @@ module.exports = function (xhr) {
       // Default request options.
       var params = {type: type};
 
-
-      var ajaxConfig = (result(model, 'ajaxConfig') || {});
+      var ajaxConfig = result(model, 'ajaxConfig', {});
       var key;
       // Combine generated headers with user's headers.
       if (ajaxConfig.headers) {
@@ -121,7 +120,6 @@ module.exports = function (xhr) {
       var promise = new Promise(function (resolve, reject) {
           request = options.xhrImplementation(ajaxSettings, function (err, resp, body) {
               if (err || resp.statusCode >= 400) {
-
                   if (options.error) {
                     try {
                       body = JSON.parse(body);
@@ -134,7 +132,7 @@ module.exports = function (xhr) {
                   // Parse body as JSON
                   var accept = mediaType.fromString(params.headers.accept);
                   var parseJson = accept.isValid() && accept.type === 'application' && (accept.subtype === 'json' || accept.suffix === 'json');
-                  if (typeof body === 'string' && (!params.headers.accept || parseJson)) {
+                  if (typeof body === 'string' && body !== '' && (!params.headers.accept || parseJson)) {
                       try {
                           body = JSON.parse(body);
                       } catch (err) {
